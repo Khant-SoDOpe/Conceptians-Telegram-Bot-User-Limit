@@ -49,17 +49,6 @@ Once the bot is up and running, users can interact with it through Telegram. Her
 7. To access Conceptions' social media links, select the `Social Media Links` option from the one-time keyboard. The bot will display buttons for various social media platforms.
 8. Click on any of the provided buttons to open the respective social media link.
 
-
-## **Contributing**
-
-Contributions to the Conceptions Telegram Bot are welcome! If you encounter any issues or have suggestions for improvements, please feel free to open an issue or submit a pull request on the project's GitHub repository.
-
-
-## **License**
-
-The Conceptions Telegram Bot is released under the[ MIT License](https://opensource.org/licenses/MIT). You can find more details in the[ LICENSE](https://github.com/example/conceptions-telegram-bot/blob/main/LICENSE) file.
-
-
 ## **About**
 
 The Conceptions Telegram Bot was developed by [Your Name] as a project to provide users with easy access to a library of books and Conceptions' social media profiles. It is not an official product of Conceptions but utilizes the Conceptions API for book data.
