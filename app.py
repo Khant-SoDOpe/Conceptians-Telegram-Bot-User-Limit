@@ -7,6 +7,7 @@ import os
 
 keep_alive()
 
+premium_user = [1605055130, 1675501326, 1889984359]
 
 bot = TeleBot(os.environ["TELEGRAM_API"])
 
@@ -109,41 +110,75 @@ def download_books(message):
 
   for user in users_data:
     if user["id"] == message.chat.id:
-      # Check if the user has reached the maximum chance count
-      if user["chance_count"] > 5:
-        bot.send_message(
-          message.chat.id,
-          "You have reached the maximum number of allowed downloads.")
-        return
+      print(message.chat.id)
+      if message.chat.id in premium_user:
+        # Process without checking chance_count for specific user ID
+        url = f"https://admin.conceptians.org/api/bot/category/{user['category']}"
+        headers = {"Authorization": os.environ["ROUTE_API"]}
+        response = requests.get(url, headers=headers)
+        json_data = response.json()
+        for book in json_data:
+          if book['title'] == message.text:
+            title = f"<b>{book['title']}</b>"
+            cat = f"<i>Category: {book['category']}</i>"
+            filesize = f"<i>File size: {book['filesize']}mb</i>"
+            download = book['link']
+            button = types.InlineKeyboardButton(text='Download', url=download)
+            # Create a keyboard with the button
+            keyboard = types.InlineKeyboardMarkup([[button]])
+            try:
+              photo_url = book['image']
+              bot.send_photo(chat_id=message.chat.id, photo=photo_url)
+            except:
+              print('no photo')
+            bot.send_message(message.chat.id,
+                             f"{title}\n{cat}\n{filesize}",
+                             parse_mode='HTML',
+                             reply_markup=keyboard)
 
-      url = f"https://admin.conceptians.org/api/bot/category/{user['category']}"
-      headers = {"Authorization": os.environ["ROUTE_API"]}
-      response = requests.get(url, headers=headers)
-      json_data = response.json()
-      for book in json_data:
-        if book['title'] == message.text:
-          title = f"<b>{book['title']}</b>"
-          cat = f"<i>Category: {book['category']}</i>"
-          filesize = f"<i>File size: {book['filesize']}mb</i>"
-          download = book['link']
-          button = types.InlineKeyboardButton(text='Download', url=download)
-          # Create a keyboard with the button
-          keyboard = types.InlineKeyboardMarkup([[button]])
-          try:
-            photo_url = book['image']
-            bot.send_photo(chat_id=message.chat.id, photo=photo_url)
-          except:
-            print('no photo')
-          bot.send_message(message.chat.id,
-                           f"{title}\n{cat}\n{filesize}",
-                           parse_mode='HTML',
-                           reply_markup=keyboard)
+            return  # Exit the function after finding the book
 
-          # Update the chance count for the user
-          user["chance_count"] += 1
+      else:
+        # Check chance_count for other user IDs
+        if user["chance_count"] > 5:
+          bot.send_message(
+            message.chat.id,
+            "You have reached the maximum number of allowed downloads.")
+          return
 
-  # Save the updated user data back to Redis
-  redis_client.set("users_data", json.dumps(users_data))
+        url = f"https://admin.conceptians.org/api/bot/category/{user['category']}"
+        headers = {"Authorization": os.environ["ROUTE_API"]}
+        response = requests.get(url, headers=headers)
+        json_data = response.json()
+        for book in json_data:
+          if book['title'] == message.text:
+            title = f"<b>{book['title']}</b>"
+            cat = f"<i>Category: {book['category']}</i>"
+            filesize = f"<i>File size: {book['filesize']}mb</i>"
+            download = book['link']
+            button = types.InlineKeyboardButton(text='Download', url=download)
+            # Create a keyboard with the button
+            keyboard = types.InlineKeyboardMarkup([[button]])
+            try:
+              photo_url = book['image']
+              bot.send_photo(chat_id=message.chat.id, photo=photo_url)
+            except:
+              print('no photo')
+            bot.send_message(message.chat.id,
+                             f"{title}\n{cat}\n{filesize}",
+                             parse_mode='HTML',
+                             reply_markup=keyboard)
+
+            # Update the chance count for the user
+            user["chance_count"] += 1
+
+            # Save the updated user data back to Redis
+            redis_client.set("users_data", json.dumps(users_data))
+
+            return  # Exit the function after finding the book
+
+  # If no book is found for the user ID, you can handle it here
+  bot.send_message(message.chat.id, "No book found for the user ID.")
 
 
 @bot.message_handler(func=lambda message: message.text == 'Social Media Links')
