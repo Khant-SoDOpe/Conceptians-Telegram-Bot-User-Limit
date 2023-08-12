@@ -7,14 +7,23 @@ import os
 
 keep_alive()
 
-premium_user = [1605055130, 1675501326, 1889984359]
-
 bot = TeleBot(os.environ["TELEGRAM_API"])
 
 # Connect to Redis
 redis_client = redis.Redis(host=os.environ['REDIS_HOST'],
                            port=os.environ['REDIS_PORT'],
                            password=os.environ['REDIS_PASSWORD'])
+
+
+def get_premium_users():
+  premium_users_data = redis_client.get("premium_users")
+  if premium_users_data:
+    return json.loads(premium_users_data)
+  else:
+    return []
+
+
+premium_users = get_premium_users()
 
 chat_id = {}
 log_key = 0
@@ -110,8 +119,7 @@ def download_books(message):
 
   for user in users_data:
     if user["id"] == message.chat.id:
-      print(message.chat.id)
-      if message.chat.id in premium_user:
+      if message.chat.id in premium_users:
         # Process without checking chance_count for specific user ID
         url = f"https://admin.conceptians.org/api/bot/category/{user['category']}"
         headers = {"Authorization": os.environ["ROUTE_API"]}
