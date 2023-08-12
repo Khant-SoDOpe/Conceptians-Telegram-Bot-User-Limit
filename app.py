@@ -3,7 +3,9 @@ import requests
 import redis
 from telebot import types, TeleBot
 from keep_alive import keep_alive
-import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 keep_alive()
 
