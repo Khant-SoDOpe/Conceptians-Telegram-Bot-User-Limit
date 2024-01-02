@@ -53,6 +53,6 @@ Once the bot is up and running, users can interact with it through Telegram. Her
 
 The Conceptions Telegram Bot was developed by Sai Khant Zay Lynn Yaung as a project to provide users with easy access to a library of books and Conceptions' social media profiles. It is not an official product of Conceptions but utilizes the Conceptions API for book data.
 
-For more information, contact [Your Name] at [your-email@example.com].
+For more information, contact Sai Khant Zay Lynn Yaung at khant_zay@icloud.com .
 
 Thank you for using the Conceptions Telegram Bot! We hope you enjoy your reading experience and find the social media links helpful.
