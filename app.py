@@ -56,18 +56,23 @@ def add(id, category):
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
-  # Create a one-time keyboard
-  keyboard = types.ReplyKeyboardMarkup(one_time_keyboard=True)
-  library = types.KeyboardButton('Library')
-  social = types.KeyboardButton('Social Media Links')
-  keyboard.add(library, social)
+    # Create a one-time keyboard
+    keyboard = types.ReplyKeyboardMarkup(one_time_keyboard=True)
+    library = types.KeyboardButton('Library')
+    social = types.KeyboardButton('Social Media Links')
+    keyboard.add(library, social)
 
-  # Send the message with the one-time keyboard
-  global log_key
-  log_key = 3
-  bot.send_message(message.chat.id,
-                   'Welcome From Conceptians!',
-                   reply_markup=keyboard)
+    # Send the message with the one-time keyboard
+    global log_key
+    log_key = 3
+    if message.chat.first_name and message.chat.last_name:
+        greeting = f'Hello! {message.chat.first_name} {message.chat.last_name}, Welcome From Conceptians!'
+    elif message.chat.first_name:
+        greeting = f'Hello! {message.chat.first_name}, Welcome From Conceptians!'
+    else:
+        greeting = 'Hello! Welcome From Conceptians!'
+
+    bot.send_message(message.chat.id, greeting, reply_markup=keyboard)
 
 
 @bot.message_handler(func=lambda message: message.text == 'Library')
@@ -126,7 +131,7 @@ def download_books(message):
         response = requests.get(url, headers=headers)
         json_data = response.json()
         for book in json_data:
-          if book['title'] == message.text:
+          if book['title'].replace(" ", "") == message.text.replace(" ", ""):
             title = f"<b>{book['title']}</b>"
             cat = f"<i>Category: {book['category']}</i>"
             filesize = f"<i>File size: {book['filesize']}mb</i>"
@@ -159,7 +164,7 @@ def download_books(message):
         response = requests.get(url, headers=headers)
         json_data = response.json()
         for book in json_data:
-          if book['title'] == message.text:
+          if book['title'].replace(" ", "") == message.text.replace(" ", ""):
             title = f"<b>{book['title']}</b>"
             cat = f"<i>Category: {book['category']}</i>"
             filesize = f"<i>File size: {book['filesize']}mb</i>"
